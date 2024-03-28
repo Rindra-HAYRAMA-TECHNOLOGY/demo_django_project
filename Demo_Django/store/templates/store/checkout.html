@@ -1,0 +1,261 @@
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<div class="row">
+	<div class="col-lg-6">
+        <div class="box-element" id="form-wrapper">
+            <form id="form" method="post">
+                {% csrf_token %}
+                <div id="user-info">
+                    <div class="form-field">
+                        <input required class="form-control" type="text" name="name" value='{{customer.name}}' placeholder="Fill out Your first name.">
+                    </div>
+                    <div class="form-field">
+                        <input required class="form-control" type="email" name="email" value='{{customer.email}}' placeholder="Fill out Your Email.">
+                    </div>
+                </div>
+                
+                <div id="shipping-info">
+                    <hr>
+                    <p>Shipping Information:</p>
+                    <hr>
+                    <div class="form-field">
+                        <input required class="form-control" type="text" name="address" placeholder="Address..">
+                    </div>
+                    <div class="form-field">
+                        <input required class="form-control" type="text" name="city" placeholder="City..">
+                    </div>
+                    <div class="form-field">
+                        <input required class="form-control" type="text" name="state" placeholder="State..">
+                    </div>
+                    <div class="form-field">
+                        <input required class="form-control" type="text" name="zipcode" placeholder="Zip code..">
+                    </div>
+                </div>
+                <hr>
+                <input id="form-button" class="btn btn-success btn-block" type="submit" value="Continue">
+            </form>
+        </div>
+        
+        <div class="hidden" id="please-wait">
+            <hr>
+            <h3><strong>Please wait...</strong></h3>
+            <hr>
+        </div>
+	
+        <br>
+
+        <div class="box-element hidden" id="payment-info">
+            <hr>
+            <h5>Choose payment method</h3>
+            <hr>
+            <input type="radio" id="paypal" name="paypal" onclick="handleRadioClick('paypal')">Paypal</input><img class="paymentmethods" src="{% static 'images/paypal_logo.png' %}"><br />
+            <input type="radio" id="cryptocurrency" name="cryptocurrency" onclick="handleRadioClick('cryptocurrency')">Cryptocurrency</input><img class="paymentmethods" src="{% static 'images/cryptocurrency.png' %}"><br />
+            <input type="radio" id="credit_card" name="credit_card" onclick="handleRadioClick('credit_card')">Credit Card</input><img class="paymentmethods" src="{% static 'images/creditCard_logo.png' %}"><br />
+
+            <form method='post'>
+                {% csrf_token %}
+                <div id="credit-cart-info" class="hidden">
+                    <hr>
+                    <p>Credit Card information:</p>
+                    <hr>
+                    
+                    <div class="form-field">
+                        <input required class="form-control" type="text" name="cc_name" placeholder="Name on card">
+                    </div>
+                    <div class="form-field">
+                        <input required class="form-control" type="tel" name="cc_number" placeholder="0000 0000 0000 0000">
+                    </div>
+                    <div class="form-field">
+                        <input required class="form-control" type="text" name="cc_exp" placeholder="MM / YY">
+                    </div>
+                    
+                    <div class="form-field">
+                        <input required class="form-control" type="tel" name="cvc_code" placeholder="CVC code">
+                    </div>
+                </div>
+            </form>
+            
+            <div id="crypto-select" class="hidden">
+                <hr>
+                <select>
+                    <option value="bitcoin" selected>Bintcoin</option>
+                    <option value="ethereum">Ethereum</option>
+                    <option value="usdt">USDT</option>
+                </select>
+                <hr>
+            </div>
+            <br />
+            <button id="make-payment">Proceed to payment</button>
+        </div>
+		
+	</div>
+
+	<div class="col-lg-6">
+	    <div class="box-element">
+            <a  class="btn btn-outline-dark" href="{% url 'cart' %}">&#x2190; Back to Cart</a>
+            <hr>
+            <h3>Order Summary for {{user}}</h3>
+            <hr>
+            
+            <table style="width:60%">
+                <tr>
+                    <td></td>
+                    <td><h5>Items: {{order.get_cart_items}}</h5></td>
+                    <td><h5>Total: ${{order.get_cart_total|floatformat:2}}</h5></td>
+                </tr>
+            </table>
+
+            {% for item in items %}
+            <div class="cart-row">
+                <div style="flex:2"><img class="row-image" src="{{item.product.imageURL}}"></div>
+                <div style="flex:2"><p>{{item.product.name}}</p></div>
+                <div style="flex:1"><p>${{item.product.price}}</p></div>
+                <div style="flex:1"><p>x{{item.quantity}}</p></div>
+            </div>
+            {% endfor %}
+
+            <h5>Items: {{order.get_cart_items}}</h5>
+            <h5>Total: ${{order.get_cart_total|floatformat:2}}</h5>
+        </div>
+	</div>
+</div>
+
+
+<script typ="text/javascript">
+    var shipping = '{{order.shipping}}'
+    var total = '{{order.get_cart_total|floatformat:2}}'
+    var name = '{{customer.name}}'
+    var email = '{{customer.email}}'
+    var v = 26
+
+
+    if (shipping == 'False' && user == 'AnonymousUser'){
+        document.getElementById('shipping-info').classList.add("hidden");
+    }
+    if(shipping == 'False'){
+        document.getElementById('shipping-info').innerHTML = ''
+    }
+
+    var form = document.getElementById('form')
+    form.addEventListener('submit', function(e){
+        e.preventDefault()
+        console.log('Form Submitted...')
+        document.getElementById('form-button').classList.add("hidden");
+        document.getElementById('payment-info').classList.remove("hidden");
+    })
+    
+    function handleRadioClick(selected) {
+        const paypalRadio = document.getElementById('paypal');
+        const cryptocurrencyRadio = document.getElementById('cryptocurrency')
+        const cryptoSelectRadio = document.getElementById('crypto-select')
+        const creditCardRadio = document.getElementById('credit_card');
+        const creditCardInfo = document.getElementById('credit-cart-info');
+
+        if (selected === 'paypal') {
+            creditCardRadio.checked = false;
+            cryptocurrencyRadio.checked = false;
+            creditCardInfo.classList.add("hidden");
+            cryptoSelectRadio.classList.add("hidden");
+        } else if (selected === 'credit_card') {
+            paypalRadio.checked = false;
+            cryptocurrencyRadio.checked = false;
+            cryptoSelectRadio.classList.add("hidden");
+            creditCardInfo.classList.remove("hidden");
+        } else if (selected === 'cryptocurrency'){
+            paypalRadio.checked = false;
+            creditCardRadio.checked = false;
+            creditCardInfo.classList.add("hidden");
+            cryptoSelectRadio.classList.remove("hidden");
+        }
+    } 
+    document.addEventListener('DOMContentLoaded', function() {
+        handleRadioClick('paypal');
+    });
+
+    document.getElementById('make-payment').addEventListener('click', function(e){
+        e.preventDefault();
+        if(total <= 0){
+            alert('There is no Protucts on You cart. Please add at least one product');
+        } else {
+            showConfirmation();
+        }
+        
+    });
+    function showConfirmation() {
+        var confirmation = confirm("Are you sure to want to proceed the payment?");
+        if (confirmation) {
+            submitFormData();
+        } else {
+
+        }
+    }
+    function submitFormData(){
+        console.log('Payment button clicked')
+
+        const pleaseWaitDiv = document.getElementById('please-wait');
+        const formCheckout = document.getElementById('form-wrapper');
+        formCheckout.classList.add("hidden");
+        pleaseWaitDiv.classList.remove("hidden");
+
+        var csrftoken = getToken('csrftoken');
+        console.log('Token:', csrftoken)
+
+        var userFormData = {
+            'name':name,
+            'email':email,
+            'total':total,
+        }
+
+        var shippingInfo = {
+            'address':null,
+            'city':null,
+            'state':null,
+            'zipcode':null,
+        }
+
+        if (shipping != 'False'){
+            shippingInfo.address = form.address.value
+            shippingInfo.city = form.city.value
+            shippingInfo.state = form.state.value
+            shippingInfo.zipcode = form.zipcode.value
+        }
+
+        if (user == 'AnonymousUser'){
+            userFormData.name = form.name.value
+            userFormData.email = form.email.value
+        }
+
+        var url = '{% url 'process_order' %}'
+
+        fetch(url, {
+            method: 'post',
+            headers: {
+                'Content-Type':'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            body: JSON.stringify({'form': userFormData, 'shipping': shippingInfo}),
+        })
+        .then((response) => {
+            return response.json();
+        })
+        .then((data) => {
+            console.log('Success:', data)
+            alert('Transaction completed')
+            cart = {}
+            document.cookie = 'cart='+JSON.stringify(cart)+";domain=;path=/"
+            window.location.href = "{% url 'store' %}"
+        })
+
+        console.log('Shipping Info:', shippingInfo)
+        console.log('User Info:', userFormData)
+
+    }
+
+</script>
+
+{% endblock content %}
+

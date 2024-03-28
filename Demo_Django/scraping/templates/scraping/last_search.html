@@ -1,0 +1,29 @@
+{% extends 'scraping/base.html' %}
+
+
+{% block content %}
+    <h4 style="text-align: center">Results for: <strong>{{text}}</strong></h4><br />
+    
+    <div class="row">
+        {% for product in ebay_product_list %}
+            {% if product.1 not in unused_list %}
+                {% if forloop.counter0|divisibleby:4 %}
+                    <div class="clearfix"></div>
+                {% endif %}
+                <div class="col s12 m6 l3">
+                    <div class="center-align box-element product">
+                        <div class="img-container">
+                            <img class="img-fluid" src="{{ product.0 }}">
+                        </div>
+                        <p>{{product.1}}</p>
+                        <p>Price: <strong>US{{product.2}}</strong></p>
+                        <button type="button">
+                            <a href="{{product.3}}" target="_blank">See original post</a>
+                        </button>
+                    </div>
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends 'scraping/base.html' %}
+
+
+{% block content %}
+    <h4 style="text-align: center">Results for: <strong>{{search_query}}</strong></h4><br />
+
+    <div class="row">
+        <div class="col s12 m6 l3">
+            <div class="center-align ">
+                <h8>Results from ebay.com</h8>
+                <div class="img-scraping-container">
+                    <img class="img-fluid" src="{{ ebay_base_image }}"><br /><br />
+                </div>
+                {% for product in ebay_product_list %}
+                    {% if product.1 not in unused_ebay_list %}
+                    <div class="center-align box-element product">
+                        <div class="img-container">
+                            <img class="img-fluid" src="{{ product.0 }}">
+                        </div>
+                        <p>{{product.1}}</p>
+                        <p>Price: <strong>US{{product.2}}</strong></p>
+                        <button type="button">
+                            <a href="{{product.3}}" target="_blank">See original post</a>
+                        </button>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col s12 m6 l3">
+            <div class="center-align">
+                <h8>Results from aliexpress.com</h8>
+                <div class="img-scraping-container">
+                    <img class="scraping-img" src="{{ aliexpress_base_image }}"><br /><br />
+                </div>
+                {% for product in express_product_list %}
+                    <div class="center box-element product">
+                        <div class="img-container">
+                            <img class="img-fluid" src="{{ product.0 }}">
+                        </div>
+                        <p>{{product.1}}</p>
+                        Price: <strong>{{product.2}}</strong><br /><br />
+                        <button type="button">
+                            <a href="{{product.3}}" target="_blank">See original post</a>
+                        </button><br />
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col s12 m6 l3">
+            <div class="center-align">
+                <h8>Results from newegg.com</h8>
+                <div class="img-scraping-container">
+                    <img class="img-fluid" src="{{ newegg_base_image }}"><br /><br />
+                </div>
+                {% for product in newegg_product_list %}
+                    <div class="center box-element product">
+                        <div class="img-container">
+                            <img class="img-fluid" src="{{ product.0 }}">
+                        </div>
+                        <p>{{product.1}}</p>
+                        Price: <strong>{{product.2}}</strong><br /><br />
+                        <button type="button">
+                            <a href="{{product.3}}" target="_blank">See original post</a>
+                        </button><br />
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="col s12 m6 l3">
+            <div class="center-align">
+                <h8>Results from alibaba.com</h8>
+                <div class="img-scraping-container">
+                    <img class="img-fluid" src="{{ ali_base_image }}"><br /><br />
+                </div>
+                {% for product in ali_product_list %}
+                    <div class="center box-element product">
+                        <div class="img-container">
+                            <img class="img-fluid" src="{{ product.0 }}">
+                        </div>
+                        <p>{{product.1}}</p>
+                        Price: <strong>{{product.2}}</strong><br /><br />
+                        <button type="button">
+                            <a href="{{product.3}}" target="_blank">See original post</a>
+                        </button><br />
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block content %}
+<h1>Sign Up</h1><br /><br />
+
+<div class="row">
+    <div class="col-lg-3">
+
+    </div>
+    <div class="col-lg-6">
+        <div class="box-element">
+            <form method="post">
+                {% csrf_token %}
+
+                <div>
+                    <label for="customer_email">Email:</label><br>
+                        <input required class="form-control" type="email" id="customer_email" name="customer_email">
+                    {{ form.as_p }}
+                    <a href="{% url 'login' %}"class="btn btn-dark">Log In</a>
+                    <input type="submit" class="btn btn-success" value="Sign Up">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

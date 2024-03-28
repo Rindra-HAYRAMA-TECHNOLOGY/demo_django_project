@@ -1,0 +1,50 @@
+{% extends 'store/main.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<h1>Welcome <strong>{{user}}</strong> to Django Store</h1><br /><br />
+
+<div class="row">    
+    <div class="col-lg-6">
+        <div class="box-element">
+            <img class="img-fluid" src="{% static 'images/banner1.jpg' %}">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="box-element">
+            <p>To see all products on Store</p>
+            <a href="{% url 'products_items' %}" class="btn btn-success">See Products</a>
+        </div>
+    </div>   
+</div>
+<div class="row">    
+    <div class="col-lg-6">
+        <div class="box-element">
+            <p>See what you got in your cart</p>
+            <a href="{% url 'cart' %}" class="btn btn-success">Cart</a>
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="box-element">
+            <img class="img-fluid" src="{% static 'images/banner2.jpg' %}">
+        </div>
+    </div>   
+</div>
+<div class="row">    
+    <div class="col-lg-6">
+        <div class="box-element">
+            <img class="img-fluid" src="{% static 'images/banner3.jpg' %}">
+        </div>
+    </div>
+    <div class="col-lg-6">
+        <div class="box-element">
+            <p>Place order and Proceed to payment</p>
+            <a href="{% url 'checkout' %}" class="btn btn-success">Checkout</a>
+        </div>
+    </div>   
+</div>
+
+
+{% endblock content %}
