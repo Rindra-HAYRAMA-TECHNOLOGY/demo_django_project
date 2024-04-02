@@ -95,11 +95,16 @@ def checkout(request):
 
 def processOrder(request):
      transaction_id = datetime.datetime.now().timestamp()
-     data = json.loads(request.body)   
-     
+     data = json.loads(request.body)
+
      if request.user.is_authenticated:
           customer = request.user.customer
-          order = Order.objects.get(customer=customer, complete=False)
+          customers = Customer.objects.filter(email=data['form']['email'])
+          if customers.exists():
+               customer = customers[0]
+               order, created = Order.objects.get_or_create(customer=customer, complete=False)
+          else:
+               order, created = Order.objects.get_or_create(customer=customer, complete=False)
 
      else:
           customer, order = guestOrder(request, data)
